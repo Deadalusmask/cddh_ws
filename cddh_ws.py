@@ -6,14 +6,18 @@ import json
 import methods
 from threading import Thread
 
-
 questions = []
 answer_sets = []
 
 async def send_request():
     resp = requests.get('http://htpmsg.jiecaojingxuan.com/msg/current',timeout=4).text
-    resp_dict = json.loads(resp)
-    print("resp_dict=",resp_dict)
+    try:
+        resp_dict = json.loads(resp)
+    except json.JSONDecodeError as identifier:
+        print('Passed JSONDecodeError')
+        return '0'
+    
+    # print("resp_dict=",resp_dict)
     # print(answer_sets)
     test = 123
     if resp_dict['msg'] == 'no data':
