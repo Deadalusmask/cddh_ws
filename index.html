@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CDDG-WS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html,body{
+            height: 100%;
+        }
+        body {
+            font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+        }
+        .app-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-line-pack: stretch;
+            align-content: stretch;
+        }
+        .left-side {
+            width: 300px;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            border-right: 2px solid #eee;
+        }
+        .right-side {
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
+        .question {
+            padding: 20px
+        }
+        .question .title {
+            font-size: 16px;
+        }
+        .question .options {
+            padding: 10px 0 10px 30px;
+        }
+        .question .option {
+            padding-bottom: 10px;
+        }
+        #iframe {
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <section class="left-side">
+            <div class="question">
+                <div id="msg"></div>
+                <div id="qes" class="title"></div>
+                <ol class="options">
+                    <li id="o1" class="option"></li>
+                    <li id="o2" class="option"></li>
+                    <li id="o3" class="option"></li>
+                </ol>
+            </div>
+        </section>
+        <section class="right-side">
+            <iframe src="https://www.baidu.com"  id="iframe" frameborder="0"></iframe>
+        </section>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script>
+        var ws = new WebSocket("ws://127.0.0.1:5678/");
+        var baseUrl = 'https://www.baidu.com/s?wd='
+        ws.onmessage = function (event) {
+            var dataArr = event.data.split('+')
+            console.log(event.data)
+            if(event.data!=0){
+                var question = dataArr[0]
+                $('#msg').text(" ")
+                $('#qes').text(dataArr[0])
+                var answers = eval(dataArr[1])
+                $('#o1').text(answers[0])
+                $('#o2').text(answers[1])
+                $('#o3').text(answers[2])
+                $('#iframe').attr('src', `${baseUrl}${question} ${answers[0]} ${answers[1]} ${answers[2]}`)
+            }else{
+                $('#msg').text("waiting for question")
+            }
+        };
+    </script>
+</body>
+</html>
